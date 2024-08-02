@@ -1,0 +1,58 @@
+Solved question based on Sakila database in MYSQL workbench
+
+-- All films with PG-13 films with rental rate of 2.99 or lower
+select * from sakila.film
+where rating = 'PG-13'
+and rental_rate <= 2.99;
+
+-- All films that have deleted scenes
+select * from sakila.film
+where special_features like '%Deleted Scenes%';
+
+-- All active customers
+select * from sakila.customer
+where active = 1;
+
+-- Names of customers who rented a movie on 26th July 2005
+select concat(first_name, " ", last_name) as Customer_name
+from sakila.customer
+inner join sakila.rental on sakila.customer.customer_id = sakila.rental.customer_id
+where date(sakila.rental.rental_date) = '2005-07-26';
+
+-- Distinct names of customers who rented a movie on 26th July 2005
+
+select distinct Customer_name
+from (select concat(first_name, " ", last_name) as Customer_name
+from sakila.customer
+inner join sakila.rental on sakila.customer.customer_id = sakila.rental.customer_id
+where date(sakila.rental.rental_date) = '2005-07-26') as Cutomer_name_tbl;
+
+-- How many distinct last names we have in the data?
+select count(distinct last_name) as ditinct_lastname_count from sakila.customer;
+
+-- How many rentals we do on each day?
+select date(rental_date) as rental_date_v1, count(rental_id) as rental_perday
+from sakila.rental
+group by rental_date_v1;
+
+-- All Sci-fi films in our catalogue
+
+select title from sakila.film
+where film_id in (select film_id from sakila.film_category
+where category_id = (select category_id from sakila.category
+where name = 'Sci-Fi'));
+-- select film_id from sakila.film_category
+-- where category_id = (select category_id from sakila.category
+-- where name = 'Sci-Fi');
+
+-- select name, category_id from sakila.category
+-- where name = 'Sci-Fi';
+
+-- Customers and how many movies they rented from us so far?
+
+select concat(first_name, " ", last_name) as Customer_name, count(rental_id) as rental_movie_count
+from sakila.customer
+inner join sakila.rental on sakila.customer.customer_id = sakila.rental.customer_id
+group by sakila.customer.customer_id;
+-- select * from sakila.customer;
+-- select * from sakila.rental;
